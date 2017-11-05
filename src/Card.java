@@ -50,6 +50,15 @@ public class Card implements Comparable<Card> {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if(o == null) {
+            return false;
+        }
+
+        return compareTo((Card)o) == 0;
+    }
+
+    @Override
     public int compareTo(Card o) {
         if (this.getRank() ==  o.getRank())
             return 0;
