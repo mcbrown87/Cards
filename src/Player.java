@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +20,10 @@ public class Player {
         return name;
     }
 
+    public void addCard(ArrayList<Card> cards) {
+        this.cards.addAll(cards);
+    }
+
     public void addCard(Card card) {
         cards.add(card);
     }
@@ -27,11 +32,31 @@ public class Player {
         return Collections.unmodifiableList(cards);
     }
 
+    public ArrayList<Card> playCard(int count) {
+        ArrayList<Card> cards = new ArrayList<>();
+        for(int i = 0;i<count;i++){
+            cards.add(playCard());
+        }
+
+        return cards;
+    }
+
     public Card playCard() {
         if (!cards.isEmpty()) {
-            return cards.remove(0);
+            Card playedCard = cards.remove(0);
+            System.out.println(String.format("%s played a %s", this, playedCard));
+            return playedCard;
         }
 
         throw new IllegalStateException("Failed to play a card. No cards to play");
+    }
+
+    public void shuffleCards() {
+        Collections.shuffle(cards);
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }
