@@ -4,6 +4,8 @@ public class War {
     private Deck deck = Deck.CreateNewDeck();
     private Player player1 = new Player("Player1");
     private Player player2 = new Player("Player2");
+    private ArrayList<IWarListener> warListeners = new ArrayList<>();
+    private ArrayList<IRoundCompleteListener> roundCompleteListeners = new ArrayList<>();
 
     public War() {
         deck.shuffle();
@@ -14,6 +16,14 @@ public class War {
         }
     }
 
+    public void addWarListener(IWarListener warListener) {
+        warListeners.add(warListener);
+    }
+
+    public void addRoundCompleteListener(IRoundCompleteListener roundCompleteListener){
+        roundCompleteListeners.add(roundCompleteListener);
+    }
+
     public void play() {
         while (!player1.getCards().isEmpty() && !player2.getCards().isEmpty()) {
             player1.shuffleCards();
@@ -21,10 +31,6 @@ public class War {
 
             ArrayList<Card> cardPool = new ArrayList<>();
             executeRound(player1, player2, cardPool);
-
-            System.out.println(String.format("Player 1 has %d cards", player1.getCards().size()));
-            System.out.println(String.format("Player 2 has %d cards", player2.getCards().size()));
-            System.out.println("----------------------------------");
         }
     }
 
@@ -35,19 +41,17 @@ public class War {
         cardPool.add(player2Card);
 
         if (player1Card.equals(player2Card)) {
-            System.out.println("WAR");
+            onWar();
             cardPool.addAll(drawWarCards(player1));
-            System.out.println("");
             cardPool.addAll(drawWarCards(player2));
-            System.out.println("");
             executeRound(player1, player2, cardPool);
 
         } else if (player1Card.compareTo(player2Card) > 0) {
-            System.out.println(String.format("%s wins!", player1));
             player1.addCard(cardPool);
+            onRoundComplete(player1, player2);
         } else {
-            System.out.println(String.format("%s wins!", player2));
             player2.addCard(cardPool);
+            onRoundComplete(player2, player1);
         }
     }
 
@@ -61,5 +65,14 @@ public class War {
         }
 
         return cards;
+    }
+
+    private void onRoundComplete(Player winningPlayer, Player losingPlayer) {
+        roundCompleteListeners.forEach(roundCompleteListener -> roundCompleteListener.OnRoundComplete(winningPlayer,
+                losingPlayer));
+    }
+
+    private void onWar(){
+        warListeners.forEach(warListeners -> warListeners.OnWar());
     }
 }
