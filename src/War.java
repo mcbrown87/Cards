@@ -35,8 +35,13 @@ public class War {
     }
 
     private void executeRound(Player player1, Player player2, ArrayList<Card> cardPool) {
+        if(player1.getCards().isEmpty() || player2.getCards().isEmpty()) {
+            return;
+        }
+
         Card player1Card = player1.playCard();
         Card player2Card = player2.playCard();
+
         cardPool.add(player1Card);
         cardPool.add(player2Card);
 
@@ -58,7 +63,7 @@ public class War {
     private ArrayList<Card> drawWarCards(Player player) {
         ArrayList<Card> cards = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
-            if(player.getCards().size() == 1) {
+            if(player.getCards().size() <= 1) {
                 break;
             }
             cards.add(player.playCard());
